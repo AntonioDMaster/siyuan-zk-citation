@@ -1,7 +1,7 @@
 {
-  "name": "siyuan-plugin-citation",
-  "author": "WingDr",
-  "url": "https://github.com/WingDr/siyuan-plugin-citation",
+  "name": "siyuan-zk-citation",
+  "author": "AntonioDMaster",
+  "url": "https://github.com/AntonioDMaster/siyuan-zk-citation",
   "version": "0.4.4",
   "minAppVersion": "3.0.4",
   "backends": ["windows", "linux", "darwin", "docker"],

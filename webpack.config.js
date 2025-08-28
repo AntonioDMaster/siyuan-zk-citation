@@ -8,8 +8,9 @@ const ZipPlugin = require("zip-webpack-plugin");
 const sveltePreprocess = require("svelte-preprocess");
 
 module.exports = (env, argv) => {
-    const targetDir = "D:/Documents/SiYuan/data/plugins/siyuan-plugin-citation/";
+    //const targetDir = "D:/Documents/SiYuan/data/plugins/siyuan-plugin-citation/";
     const isPro = argv.mode === "production";
+    const targetDir = isPro ? path.resolve(__dirname) : path.resolve(__dirname, "dev");
     const plugins = [
         new MiniCssExtractPlugin({
             filename: isPro ? "dist/index.css" : "index.css",
@@ -91,7 +92,9 @@ module.exports = (env, argv) => {
             ],
         },
         resolve: {
-            extensions: [".ts", ".scss", ".js", ".json", ".mjs", ".svelte"]
+            extensions: [".ts", ".scss", ".js", ".json", ".mjs", ".svelte"],
+            conditionNames: ["svelte", "browser", "development", "import", "module"],
+            mainFields: ["svelte", "browser", "module", "main"]
         },
         module: {
             rules: [

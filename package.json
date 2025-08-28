@@ -1,7 +1,7 @@
 {
-  "name": "siyuan-plugin-citation",
+  "name": "siyuan-zk-citation",
   "version": "0.0.3",
-  "description": "This is a citation plugin (https://github.com/WingDr/siyuan-plugin-citation) for Siyuan (https://b3log.org/siyuan)",
+  "description": "This is a citation plugin (https://github.com/AntonioDMaster/siyuan-zk-citation) for Siyuan (https://b3log.org/siyuan)",
   "main": ".src/index.js",
   "scripts": {
     "lint": "eslint . --fix --cache",
@@ -9,7 +9,7 @@
     "build": "webpack --mode production"
   },
   "keywords": [],
-  "author": "WingDr",
+  "author": "AntonioDMaster",
   "license": "MIT",
   "devDependencies": {
     "@tsconfig/svelte": "5.0.4",

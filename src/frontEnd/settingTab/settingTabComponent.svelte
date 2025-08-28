@@ -338,16 +338,38 @@
   }
 
   function _saveData() {
-    // 将主要参数设置为第一组参数
-    customCiteText = linkTemplatesGroup[0].customCiteText;
-    useDynamicRefLink = linkTemplatesGroup[0].useDynamicRefLink;
-    shortAuthorLimit = linkTemplatesGroup[0].shortAuthorLimit;
-    linkTemplate = linkTemplatesGroup[0].linkTemplate;
-    multiCitePrefix = linkTemplatesGroup[0].multiCitePrefix;
-    multiCiteConnector = linkTemplatesGroup[0].multiCiteConnector;
-    multiCiteSuffix = linkTemplatesGroup[0].multiCiteSuffix;
-    nameTemplate = linkTemplatesGroup[0].nameTemplate;
-    const storage_group = $state.snapshot(linkTemplatesGroup);
+    // 将主要参数设置为第一组参数（为空时回退到当前输入值）
+    const main = linkTemplatesGroup[0] ?? {
+      customCiteText,
+      useDynamicRefLink,
+      shortAuthorLimit,
+      linkTemplate,
+      multiCitePrefix,
+      multiCiteConnector,
+      multiCiteSuffix,
+      nameTemplate
+    };
+    customCiteText = main.customCiteText;
+    useDynamicRefLink = main.useDynamicRefLink;
+    shortAuthorLimit = main.shortAuthorLimit;
+    linkTemplate = main.linkTemplate;
+    multiCitePrefix = main.multiCitePrefix;
+    multiCiteConnector = main.multiCiteConnector;
+    multiCiteSuffix = main.multiCiteSuffix;
+    nameTemplate = main.nameTemplate;
+    // 确保保存时至少有一组模板
+    const normalizedGroup = linkTemplatesGroup.length ? linkTemplatesGroup : [{
+      name: "default",
+      customCiteText,
+      useDynamicRefLink,
+      shortAuthorLimit,
+      linkTemplate,
+      multiCitePrefix,
+      multiCiteConnector,
+      multiCiteSuffix,
+      nameTemplate
+    }];
+    const storage_group = $state.snapshot(normalizedGroup);
     const settingData = {
       referenceNotebook,
       referencePath,
@@ -416,8 +438,12 @@
   }
 
   onMount(async () => {
-    const file = await plugin.kernelApi.getFile("/data/plugins/siyuan-plugin-citation/plugin.json", "json");
-    pluginVersion = (file as any).version;
+    try {
+      const file = await plugin.kernelApi.getFile(`/data/plugins/${plugin.name}/plugin.json`, "json");
+      pluginVersion = (file as any)?.version ?? "";
+    } catch (e) {
+      pluginVersion = pluginVersion || "";
+    }
     await initializeData();
   });
 
@@ -496,20 +522,13 @@
     <Panel display={panels[0].key === panel_focus}>
       <Item>
         {#snippet titleSlot()}
-            <h4 >
+          <h4>
             {(plugin.i18n.settingTab as any).settingTabTitle.replace(
               "${version}",
               pluginVersion
             )}
           </h4>
-          {/snippet}
-        {#snippet textSlot()}
-            <span >
-            {@html (plugin.i18n.settingTab as any).settingTabDescription
-              .replaceAll("${e-mail}", eMail)
-              .replace("${issuesURL}", issuesURL)}
-          </span>
-          {/snippet}
+        {/snippet}
       </Item>
 
       <!-- 选择笔记本 -->
@@ -819,7 +838,7 @@
                 normal={true}
                 type={ItemType.button}
                 settingKey="Button"
-                settingValue={"添加"}
+                settingValue={(plugin.i18n.settingTab as any).templates.citeLink.citeTypeCardAdd}
                 onclicked={() => {
                   if (isDev) logger.info("Button clicked");
                   addLinkTemp();
